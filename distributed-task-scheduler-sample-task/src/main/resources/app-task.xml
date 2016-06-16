@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:c="http://www.springframework.org/schema/c" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	
+	<task:executor id="executor" pool-size="10" />
+    <task:scheduler id="scheduler" pool-size="10" />
+    <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true" />
+	
+	<bean id="taskSchedulerServerListener" class="com.github.dts.server.listener.DistributedTaskSchedulerServerListener"
+		p:client-ref="curatorFramework"
+		p:leaderListenerPath="${leader.listener.path}"
+		p:leaderListenerName="${leader.listener.name}" />
+		
+	<bean id="converter" class="com.github.dts.core.converter.ScheduledTaskDefinitionConverter" />
+	
+	<bean id="taskSchedulerServer" class="com.github.dts.server.DistributedTaskSchedulerServer"
+		c:taskSchedulerServerListener-ref="taskSchedulerServerListener"
+		p:taskScheduler-ref="scheduler" />
+		
+	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.ScheduledTaskWatcher"
+		p:curatorOperations-ref="curatorOperations"
+		p:taskSchedulerServer-ref="taskSchedulerServer"
+		p:converter-ref="converter"
+		p:scheduledTaskDefinitionsParentPath="${scheduled.task.definitions.parent.path}" />
+		
+</beans>
