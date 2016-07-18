@@ -15,17 +15,14 @@
 		p:client-ref="curatorFramework"
 		p:leaderListenerPath="${leader.listener.path}"
 		p:leaderListenerName="${leader.listener.name}" />
-		
-	<bean id="converter" class="com.github.dts.core.converter.ScheduledTaskDefinitionConverter" />
 	
 	<bean id="taskSchedulerServer" class="com.github.dts.server.DistributedTaskSchedulerServer"
 		c:taskSchedulerServerListener-ref="taskSchedulerServerListener"
 		p:taskScheduler-ref="scheduler" />
 		
-	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.ScheduledTaskWatcher"
+	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.DistributedScheduledTaskWatcher"
 		p:curatorOperations-ref="curatorOperations"
 		p:taskSchedulerServer-ref="taskSchedulerServer"
-		p:converter-ref="converter"
 		p:scheduledTaskDefinitionsParentPath="${scheduled.task.definitions.parent.path}" />
 		
 </beans>
