@@ -10,14 +10,19 @@
 	<task:executor id="executor" pool-size="10" />
     <task:scheduler id="scheduler" pool-size="10" />
     <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true" />
+    
+    <bean id="serverNameAwarePostProcessor" class="com.github.dts.server.ServerNameAwarePostProcessor"
+    	p:serverName="${server.name}" />
 	
 	<bean id="taskSchedulerServerListener" class="com.github.dts.server.listener.DistributedTaskSchedulerServerListener"
 		p:client-ref="curatorFramework"
-		p:leaderListenerPath="${leader.listener.path}"
-		p:leaderListenerName="${leader.listener.name}" />
+		p:listenerPath="${listener.path}" />
 	
 	<bean id="taskSchedulerServer" class="com.github.dts.server.DistributedTaskSchedulerServer"
-		c:taskSchedulerServerListener-ref="taskSchedulerServerListener"
+		p:taskSchedulerExecutor-ref="taskSchedulerExecutor" />
+		
+	<bean id="taskSchedulerExecutor" class="com.github.dts.server.executor.DistributedTaskSchedulerExecutor" 
+		p:taskSchedulerServerListener-ref="taskSchedulerServerListener"
 		p:taskScheduler-ref="scheduler" />
 		
 	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.DistributedScheduledTaskWatcher"
