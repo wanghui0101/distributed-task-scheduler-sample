@@ -13,11 +13,14 @@
     
     <bean id="serverNameAwarePostProcessor" class="com.github.dts.server.ServerNameAwarePostProcessor"
     	p:serverName="${server.name}" />
+    	
+    <bean id="scheduledTaskWatcherStarter" class="com.github.dts.server.watcher.SchedulerTaskWatcherStarter" />
 	
-	<bean id="taskSchedulerServerListener" class="com.github.dts.server.listener.DistributedTaskSchedulerServerListener"
-		p:client-ref="curatorFramework"
-		p:listenerPath="${listener.path}" />
-	
+	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.DistributedScheduledTaskWatcher"
+		p:curatorOperations-ref="curatorOperations"
+		p:taskSchedulerServer-ref="taskSchedulerServer"
+		p:scheduledTaskDefinitionsParentPath="${scheduled.task.definitions.parent.path}" />
+			
 	<bean id="taskSchedulerServer" class="com.github.dts.server.DistributedTaskSchedulerServer"
 		p:taskSchedulerExecutor-ref="taskSchedulerExecutor" />
 		
@@ -25,9 +28,8 @@
 		p:taskSchedulerServerListener-ref="taskSchedulerServerListener"
 		p:taskScheduler-ref="scheduler" />
 		
-	<bean id="scheduledTaskWatcher" class="com.github.dts.server.watcher.DistributedScheduledTaskWatcher"
-		p:curatorOperations-ref="curatorOperations"
-		p:taskSchedulerServer-ref="taskSchedulerServer"
-		p:scheduledTaskDefinitionsParentPath="${scheduled.task.definitions.parent.path}" />
+	<bean id="taskSchedulerServerListener" class="com.github.dts.server.listener.DistributedTaskSchedulerServerListener"
+		p:client-ref="curatorFramework"
+		p:listenerPath="${listener.path}" />
 		
 </beans>
